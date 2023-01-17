@@ -1,0 +1,63 @@
+*ddu-filter-kensaku.txt*			    Migemo matcher for ddu.vim
+
+Author:  Milly https://github.com/Milly
+License: MIT License (See LICENSE)
+
+CONTENTS						  *ddu-filter-kensaku*
+
+Introduction		|ddu-filter-kensaku-introduction|
+Install			|ddu-filter-kensaku-install|
+Examples		|ddu-filter-kensaku-examples|
+Params			|ddu-filter-kensaku-params|
+
+
+==============================================================================
+INTRODUCTION				     *ddu-filter-kensaku-introduction*
+
+This matcher filters Migemo matched items.
+
+It supports narrowing inputs by spaces.
+
+
+==============================================================================
+INSTALL						  *ddu-filter-kensaku-install*
+
+Install all plugins below.
+
+[denops.vim]: https://github.com/vim-denops/denops.vim
+[ddu.vim]: https://github.com/Shougo/ddu.vim
+[kensaku.vim]: https://github.com/lambdalisue/kensaku.vim
+
+
+==============================================================================
+EXAMPLES					 *ddu-filter-kensaku-examples*
+>
+>
+	call ddu#custom#patch_global('sourceOptions', #{
+	      \  _: #{
+	      \    matchers: ['matcher_kensaku'],
+	      \  },
+	      \})
+
+	" Option: Enable highlight matched text
+	call ddu#custom#patch_global('filterParams', #{
+	    \  matcher_kensaku: #{
+	    \    highlightMatched: 'Search',
+	    \  },
+	    \})
+<
+
+==============================================================================
+PARAMS						   *ddu-filter-kensaku-params*
+
+				   *ddu-filter-kensaku-param-highlightMatched*
+highlightMatched (string)
+		The highlight group of matched text.
+		If empty, this feature will be disabled.
+		Note: This feature slows down matching when there are many
+		search items.
+
+		Default: ""
+
+==============================================================================
+vim:tw=78:ts=8:ft=help:norl:noet:fen:noet:
