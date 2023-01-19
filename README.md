@@ -1,5 +1,8 @@
 # ddu-filter-kensaku
 
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
+[![Vim doc](https://img.shields.io/badge/doc-%3Ah%20ddu--filter--kensaku-orange.svg?style=flat-square&logo=vim)](doc/ddu-filter-kensaku.txt)
+
 Migemo matcher for ddu.vim
 
 [Migemo][] を利用してローマ字入力により [ddu.vim][] のアイテムから日本語文字列をマッチングします。
