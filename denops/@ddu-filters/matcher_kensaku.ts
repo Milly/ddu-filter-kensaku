@@ -28,9 +28,7 @@ export class Filter extends BaseFilter<Params> {
     }
 
     const patterns = await Promise.all(
-      input.split(/\s+/).map((text) =>
-        denops.dispatch("kensaku", "query", text) as Promise<string>
-      ),
+      input.split(/\s+/).map((text) => kensakuQuery(denops, text)),
     );
     const patternFlags = [
       sourceOptions.ignoreCase ? "i" : "",
@@ -76,4 +74,8 @@ export class Filter extends BaseFilter<Params> {
 
 function getByteLength(s: string): number {
   return (new TextEncoder()).encode(s).length;
+}
+
+function kensakuQuery(denops: Denops, text: string): Promise<string> {
+  return denops.dispatch("kensaku", "query", text) as Promise<string>;
 }
