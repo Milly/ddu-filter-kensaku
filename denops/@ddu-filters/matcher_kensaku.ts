@@ -3,6 +3,7 @@ import {
   type DduItem,
 } from "https://deno.land/x/ddu_vim@v2.2.0/types.ts";
 import type { FilterArguments } from "https://deno.land/x/ddu_vim@v2.2.0/base/filter.ts";
+import type { Denops } from "https://deno.land/x/denops_core@v4.0.0/mod.ts";
 
 type Params = {
   highlightMatched: string;
