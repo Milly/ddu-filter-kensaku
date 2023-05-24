@@ -128,8 +128,10 @@ export class Filter extends BaseFilter<Params> {
   }
 }
 
+const textEncoder = new TextEncoder();
+
 function getByteLength(s: string): number {
-  return (new TextEncoder()).encode(s).length;
+  return textEncoder.encode(s).length;
 }
 
 function kensakuQuery(denops: Denops, text: string): Promise<string> {
