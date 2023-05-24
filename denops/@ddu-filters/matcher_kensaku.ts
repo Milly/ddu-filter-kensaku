@@ -87,7 +87,22 @@ export class Filter extends BaseFilter<Params> {
         .map((m): ItemHighlightPos => ({
           col: getByteLength(text.slice(0, m.index!)) + 1,
           width: getByteLength(m[0]),
-        }));
+        }))
+        // Sort by ascending `col`
+        .toSorted((a, b) => a.col - b.col)
+        // Merge overlaps
+        .reduce(
+          (acc, cur) => {
+            const prev = acc.at(-1);
+            if (prev && cur.col <= prev.col + prev.width) {
+              prev.width = cur.col + cur.width - prev.col;
+            } else {
+              acc.push(cur);
+            }
+            return acc;
+          },
+          [] as ItemHighlightPos[],
+        );
 
     return items.map(
       (item) => {
