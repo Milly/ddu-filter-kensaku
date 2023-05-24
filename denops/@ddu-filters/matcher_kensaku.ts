@@ -33,7 +33,6 @@ export class Filter extends BaseFilter<Params> {
     );
     const patternFlags = [
       sourceOptions.ignoreCase ? "i" : "",
-      "g",
     ].join("");
     const matchers = patterns.map((pattern) =>
       new RegExp(pattern, patternFlags)
@@ -41,20 +40,23 @@ export class Filter extends BaseFilter<Params> {
 
     items = matchers.reduce(
       (items, matcher) =>
-        items.filter(({ matcherKey }) => new RegExp(matcher).test(matcherKey)),
+        items.filter(({ matcherKey }) => matcher.test(matcherKey)),
       items,
     );
 
     if (filterParams.highlightMatched !== "") {
       // Highlight matched text
+      const globalMatchers = matchers.map((matcher) =>
+        new RegExp(matcher, "g" + matcher.flags)
+      );
       items = items.map(
         (item) => {
           const display = item.display ?? item.word;
           const highlights = item.highlights?.filter(({ name }) =>
             name != "matched"
           ) ?? [];
-          const matches = matchers.flatMap((matcher) =>
-            Array.from(display.matchAll(new RegExp(matcher)))
+          const matches = globalMatchers.flatMap(
+            (matcher) => [...display.matchAll(matcher)]
           );
           highlights.push(
             ...matches.map((m) => ({
