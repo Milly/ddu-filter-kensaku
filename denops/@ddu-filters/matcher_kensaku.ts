@@ -3,9 +3,9 @@ import {
   type DduItem,
   type ItemHighlight,
   type SourceOptions,
-} from "https://deno.land/x/ddu_vim@v2.8.5/types.ts";
-import type { FilterArguments } from "https://deno.land/x/ddu_vim@v2.8.5/base/filter.ts";
-import type { Denops } from "https://deno.land/x/ddu_vim@v2.8.5/deps.ts";
+} from "https://deno.land/x/ddu_vim@v3.2.7/types.ts";
+import type { FilterArguments } from "https://deno.land/x/ddu_vim@v3.2.7/base/filter.ts";
+import type { Denops } from "https://deno.land/x/ddu_vim@v3.2.7/deps.ts";
 
 const MATCHED_HIGHLIGHT_NAME = "matched";
 
