@@ -1,13 +1,23 @@
 import {
   BaseFilter,
   type DduItem,
-} from "https://deno.land/x/ddu_vim@v2.7.0/types.ts";
-import type { FilterArguments } from "https://deno.land/x/ddu_vim@v2.7.0/base/filter.ts";
-import type { Denops } from "https://deno.land/x/denops_core@v4.0.0/mod.ts";
+  type ItemHighlight,
+  type SourceOptions,
+} from "https://deno.land/x/ddu_vim@v2.8.5/types.ts";
+import type { FilterArguments } from "https://deno.land/x/ddu_vim@v2.8.5/base/filter.ts";
+import type { Denops } from "https://deno.land/x/ddu_vim@v2.8.5/deps.ts";
+
+const MATCHED_HIGHLIGHT_NAME = "matched";
 
 type Params = {
+  /**
+   * The highlight group of matched text.
+   * If empty, this feature will be disabled.
+   */
   highlightMatched: string;
 };
+
+type ItemHighlightPos = Pick<ItemHighlight, "col" | "width">;
 
 export class Filter extends BaseFilter<Params> {
   override params(): Params {
@@ -21,60 +31,107 @@ export class Filter extends BaseFilter<Params> {
       Params
     >,
   ): Promise<DduItem[]> {
-    input = input.trim();
-    if (input === "") return items;
+    const matchers = await this.#getMatchers(denops, input, sourceOptions);
+    if (matchers.length === 0) return items;
 
-    if (sourceOptions.ignoreCase) {
-      input = input.toLowerCase();
-    }
-
-    const patterns = await Promise.all(
-      input.split(/\s+/).map((text) => kensakuQuery(denops, text)),
-    );
-    const patternFlags = [
-      sourceOptions.ignoreCase ? "i" : "",
-      "g",
-    ].join("");
-    const matchers = patterns.map((pattern) =>
-      new RegExp(pattern, patternFlags)
-    );
-
-    items = matchers.reduce(
-      (items, matcher) =>
-        items.filter(({ matcherKey }) => new RegExp(matcher).test(matcherKey)),
-      items,
-    );
+    items = this.#extractMatches(items, matchers);
 
     if (filterParams.highlightMatched !== "") {
-      // Highlight matched text
-      items = items.map(
-        (item) => {
-          const display = item.display ?? item.word;
-          const highlights = item.highlights?.filter(({ name }) =>
-            name != "matched"
-          ) ?? [];
-          const matches = matchers.flatMap((matcher) =>
-            Array.from(display.matchAll(new RegExp(matcher)))
-          );
-          highlights.push(
-            ...matches.map((m) => ({
-              name: "matched",
-              "hl_group": filterParams.highlightMatched,
-              col: getByteLength(display.slice(0, m.index ?? 0)) + 1,
-              width: getByteLength(m[0]),
-            })),
-          );
-          return { ...item, highlights };
-        },
-      );
+      items = this.#updateHighlights(items, matchers, filterParams);
     }
 
     return items;
   }
+
+  async #getMatchers(
+    denops: Denops,
+    input: string,
+    { ignoreCase }: SourceOptions,
+  ): Promise<RegExp[]> {
+    input = input.trim();
+    if (input === "") return [];
+    if (ignoreCase) {
+      input = input.toLowerCase();
+    }
+    // No global flag, because it only needs to match once to extract
+    const patternFlags = ignoreCase ? "i" : "";
+    return await Promise.all(
+      input.split(/\s+/).map(async (text) => {
+        const pattern = await kensakuQuery(denops, text);
+        return new RegExp(pattern, patternFlags);
+      }),
+    );
+  }
+
+  #extractMatches(items: DduItem[], matchers: RegExp[]): DduItem[] {
+    return items.filter(({ matcherKey }) =>
+      matchers.every((m) => m.test(matcherKey))
+    );
+  }
+
+  #updateHighlights(
+    items: DduItem[],
+    matchers: RegExp[],
+    { highlightMatched }: Params,
+  ): DduItem[] {
+    // Add global flag, to get all matches in the item
+    const globalMatchers = matchers.map((matcher) =>
+      new RegExp(matcher, "g" + matcher.flags)
+    );
+
+    const getMatchedRanges = (text: string) =>
+      globalMatchers
+        // Get matches
+        .flatMap((matcher) => [...text.matchAll(matcher)])
+        // Convert to ItemHighlightPos
+        .map((m): ItemHighlightPos => ({
+          col: getByteLength(text.slice(0, m.index!)) + 1,
+          width: getByteLength(m[0]),
+        }))
+        // Sort by ascending `col`
+        .toSorted((a, b) => a.col - b.col)
+        // Merge overlaps
+        .reduce(
+          (acc, cur) => {
+            const prev = acc.at(-1);
+            if (prev && cur.col <= prev.col + prev.width) {
+              prev.width = cur.col + cur.width - prev.col;
+            } else {
+              acc.push(cur);
+            }
+            return acc;
+          },
+          [] as ItemHighlightPos[],
+        );
+
+    return items.map(
+      (item) => {
+        const display = item.display ?? item.word;
+        const ranges = getMatchedRanges(display);
+        const matchedHighlights = ranges.map(({ col, width }) => ({
+          name: MATCHED_HIGHLIGHT_NAME,
+          "hl_group": highlightMatched,
+          col,
+          width,
+        }));
+        const highlightsWithoutMatched =
+          item.highlights?.filter(({ name }) =>
+            name !== MATCHED_HIGHLIGHT_NAME
+          ) ?? [];
+        const highlights = [
+          ...highlightsWithoutMatched,
+          ...matchedHighlights,
+        ];
+        return { ...item, highlights };
+      },
+    );
+  }
 }
 
+const textEncoder = new TextEncoder();
+
 function getByteLength(s: string): number {
-  return (new TextEncoder()).encode(s).length;
+  return textEncoder.encode(s).length;
 }
 
 function kensakuQuery(denops: Denops, text: string): Promise<string> {
