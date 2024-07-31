@@ -1,10 +1,13 @@
 {
   "lock": false,
+  "fmt": {
+    "exclude": [
+      "*.md"
+    ]
+  },
   "tasks": {
-    "lint": "deno lint **/*.ts",
-    "fmt": "deno fmt **/*.ts",
-    "test": "deno test --no-lock -A --doc --parallel --shuffle",
-    "check": "deno check --no-lock **/*.ts",
-    "upgrade": "deno run --no-lock -A https://deno.land/x/udd@0.8.2/main.ts **/*.ts"
+    "check": "deno lint && deno fmt --check && deno check --no-lock **/*.ts",
+    "test": "deno test -A --doc --parallel --shuffle",
+    "update": "deno run --unstable-kv --allow-env --allow-read --allow-write --allow-run=git,deno --allow-net=jsr.io,api.jsr.io jsr:@molt/cli@^0.19.1 **/*.ts"
   }
 }
