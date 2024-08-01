@@ -1,11 +1,13 @@
+import type { Denops } from "jsr:@denops/core@^7.0.0";
 import {
   BaseFilter,
-  type DduItem,
-  type ItemHighlight,
-  type SourceOptions,
-} from "https://deno.land/x/ddu_vim@v3.10.3/types.ts";
-import type { FilterArguments } from "https://deno.land/x/ddu_vim@v3.10.3/base/filter.ts";
-import type { Denops } from "https://deno.land/x/ddu_vim@v3.10.3/deps.ts";
+  type FilterArguments,
+} from "jsr:@shougo/ddu-vim@^5.0.0/filter";
+import type {
+  DduItem,
+  ItemHighlight,
+  SourceOptions,
+} from "jsr:@shougo/ddu-vim@^5.0.0/types";
 
 const MATCHED_HIGHLIGHT_NAME = "matched";
 
