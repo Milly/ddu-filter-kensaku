@@ -7,6 +7,10 @@ Migemo matcher for ddu.vim
 
 [Migemo][] を利用してローマ字入力により [ddu.vim][] のアイテムから日本語文字列をマッチングします。
 
+単語を空白で区切って入力することで AND 検索ができます。
+
+例: `roma nihongo` で「... ローマ字 ... 日本語 ...」のような文にマッチします。
+
 ![ddu-filter-kensaku](https://github.com/user-attachments/assets/e58a0b25-0100-43b5-b759-289465b52a5a)
 
 ## Required
