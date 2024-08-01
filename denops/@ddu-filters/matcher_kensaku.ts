@@ -5,6 +5,7 @@ import {
 } from "jsr:@shougo/ddu-vim@^5.0.0/filter";
 import type {
   DduItem,
+  FilterOptions,
   ItemHighlight,
   SourceOptions,
 } from "jsr:@shougo/ddu-vim@^5.0.0/types";
@@ -15,6 +16,8 @@ type Params = {
   /**
    * The highlight group of matched text.
    * If empty, this feature will be disabled.
+   *
+   * @default {""}
    */
   highlightMatched: string;
 };
@@ -29,36 +32,56 @@ export class Filter extends BaseFilter<Params> {
   }
 
   override async filter(
-    { denops, input, items, sourceOptions, filterParams }: FilterArguments<
-      Params
-    >,
+    args: FilterArguments<Params>,
   ): Promise<DduItem[]> {
-    const matchers = await this.#getMatchers(denops, input, sourceOptions);
+    const {
+      denops,
+      input,
+      items,
+      sourceOptions,
+      filterOptions,
+      filterParams,
+    } = args;
+
+    const matchers = await this.#getMatchers(
+      denops,
+      input,
+      sourceOptions,
+      filterOptions,
+    );
     if (matchers.length === 0) return items;
 
-    items = this.#extractMatches(items, matchers);
+    let filteredItems = this.#extractMatches(items, matchers);
 
     if (filterParams.highlightMatched !== "") {
-      items = this.#updateHighlights(items, matchers, filterParams);
+      filteredItems = this.#updateHighlights(
+        filteredItems,
+        matchers,
+        filterParams,
+      );
     }
 
-    return items;
+    return filteredItems;
   }
 
   async #getMatchers(
     denops: Denops,
     input: string,
-    { ignoreCase }: SourceOptions,
+    { ignoreCase, smartCase }: SourceOptions,
+    { minInputLength }: FilterOptions,
   ): Promise<RegExp[]> {
     input = input.trim();
     if (input === "") return [];
-    if (ignoreCase) {
-      input = input.toLowerCase();
-    }
-    // No global flag, because it only needs to match once to extract
-    const patternFlags = ignoreCase ? "i" : "";
+    const inputParts = input.split(/\s+/).filter((part) =>
+      part.length >= minInputLength
+    );
     return await Promise.all(
-      input.split(/\s+/).map(async (text) => {
+      inputParts.map(async (text) => {
+        let patternFlags = "";
+        if (ignoreCase && (!smartCase || !/\p{Lu}/v.test(text))) {
+          text = text.toLowerCase();
+          patternFlags = "i";
+        }
         const pattern = await kensakuQuery(denops, text);
         return new RegExp(pattern, patternFlags);
       }),
