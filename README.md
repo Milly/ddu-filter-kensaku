@@ -7,6 +7,8 @@ Migemo matcher for ddu.vim
 
 [Migemo][] を利用してローマ字入力により [ddu.vim][] のアイテムから日本語文字列をマッチングします。
 
+![ddu-filter-kensaku](https://github.com/user-attachments/assets/e58a0b25-0100-43b5-b759-289465b52a5a)
+
 ## Required
 
 以下のプラグインに依存します。
