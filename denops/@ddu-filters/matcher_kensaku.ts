@@ -10,7 +10,7 @@ import type {
   SourceOptions,
 } from "jsr:@shougo/ddu-vim@^5.0.0/types";
 
-const MATCHED_HIGHLIGHT_NAME = "matched";
+const MATCHED_HIGHLIGHT_NAME = "ddu-filter-matcher_kensaku-matched";
 
 type Params = {
   /**
@@ -133,12 +133,13 @@ export class Filter extends BaseFilter<Params> {
       (item) => {
         const display = item.display ?? item.word;
         const ranges = getMatchedRanges(display);
-        const matchedHighlights = ranges.map(({ col, width }) => ({
-          name: MATCHED_HIGHLIGHT_NAME,
-          "hl_group": highlightMatched,
-          col,
-          width,
-        }));
+        const matchedHighlights = ranges
+          .map(({ col, width }): ItemHighlight => ({
+            name: MATCHED_HIGHLIGHT_NAME,
+            "hl_group": highlightMatched,
+            col,
+            width,
+          }));
         const highlightsWithoutMatched =
           item.highlights?.filter(({ name }) =>
             name !== MATCHED_HIGHLIGHT_NAME
