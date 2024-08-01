@@ -1,6 +1,6 @@
 # ddu-filter-kensaku
 
-[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
+[![license:MIT](https://img.shields.io/github/license/Milly/ddu-filter-kensaku?style=flat-square)](LICENSE)
 [![Vim doc](https://img.shields.io/badge/doc-%3Ah%20ddu--filter--kensaku-orange.svg?style=flat-square&logo=vim)](doc/ddu-filter-kensaku.txt)
 
 Migemo matcher for ddu.vim
