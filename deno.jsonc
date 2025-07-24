@@ -6,6 +6,7 @@
     ]
   },
   "tasks": {
+    "cache": "deno cache **/*.ts",
     "check": "deno lint && deno fmt --check && deno check --no-lock **/*.ts",
     "test": "deno test -A --doc --parallel --shuffle",
     "update": "deno run --unstable-kv --allow-env --allow-read --allow-write --allow-run=git,deno --allow-net=jsr.io,api.jsr.io jsr:@molt/cli@^0.19.1 **/*.ts"
