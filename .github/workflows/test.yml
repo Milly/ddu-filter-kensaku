@@ -22,14 +22,20 @@ jobs:
         runner:
           - ubuntu-latest
         deno_version:
+          # Minimum Denops support version
           - "1.45.x"
+          # Latest version
+          - "2.x"
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v4
 
-      - uses: denoland/setup-deno@v1
+      - uses: denoland/setup-deno@v2
         with:
           deno-version: "${{ matrix.deno_version }}"
+
+      - name: Pre-cache dependencies
+        run: deno task cache
 
       - name: Check
         run: deno task check
