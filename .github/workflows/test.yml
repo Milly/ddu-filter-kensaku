@@ -18,6 +18,7 @@ defaults:
 jobs:
   check:
     strategy:
+      fail-fast: false
       matrix:
         runner:
           - ubuntu-latest
