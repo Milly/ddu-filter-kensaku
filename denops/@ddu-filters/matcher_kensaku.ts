@@ -2,13 +2,13 @@ import type { Denops } from "jsr:@denops/core@^7.0.0";
 import {
   BaseFilter,
   type FilterArguments,
-} from "jsr:@shougo/ddu-vim@^5.0.0/filter";
+} from "jsr:@shougo/ddu-vim@^10.0.0/filter";
 import type {
   DduItem,
   FilterOptions,
   ItemHighlight,
   SourceOptions,
-} from "jsr:@shougo/ddu-vim@^5.0.0/types";
+} from "jsr:@shougo/ddu-vim@^10.0.0/types";
 
 const MATCHED_HIGHLIGHT_NAME = "ddu-filter-matcher_kensaku-matched";
 
