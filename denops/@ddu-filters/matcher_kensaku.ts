@@ -10,18 +10,11 @@ import type {
   SourceOptions,
 } from "jsr:@shougo/ddu-vim@^10.0.0/types";
 
+import type { MatcherKensakuParams } from "../ddu-filter-kensaku/types.ts";
+
 const MATCHED_HIGHLIGHT_NAME = "ddu-filter-matcher_kensaku-matched";
 
-type Params = {
-  /**
-   * The highlight group of matched text.
-   * If empty, this feature will be disabled.
-   *
-   * @default {""}
-   */
-  highlightMatched: string;
-};
-
+type Params = Required<MatcherKensakuParams>;
 type ItemHighlightPos = Pick<ItemHighlight, "col" | "width">;
 
 export class Filter extends BaseFilter<Params> {
