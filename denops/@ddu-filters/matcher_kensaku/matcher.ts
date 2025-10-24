@@ -1,23 +1,20 @@
-import type { Denops } from "jsr:@denops/core@^7.0.0";
-import {
-  BaseFilter,
-  type FilterArguments,
-} from "jsr:@shougo/ddu-vim@^10.0.0/filter";
+import type { Denops } from "@denops/std";
+import { BaseFilter, type FilterArguments } from "@shougo/ddu-vim/filter";
 import type {
   DduItem,
   FilterOptions,
   ItemHighlight,
   SourceOptions,
-} from "jsr:@shougo/ddu-vim@^10.0.0/types";
+} from "@shougo/ddu-vim/types";
 
-import type { MatcherKensakuParams } from "../ddu-filter-kensaku/types.ts";
+import type { MatcherKensakuParams } from "./types.ts";
 
 const MATCHED_HIGHLIGHT_NAME = "ddu-filter-matcher_kensaku-matched";
 
 type Params = Required<MatcherKensakuParams>;
 type ItemHighlightPos = Pick<ItemHighlight, "col" | "width">;
 
-export class Filter extends BaseFilter<Params> {
+export class MatcherKensakuFilter extends BaseFilter<Params> {
   override params(): Params {
     return {
       highlightMatched: "",

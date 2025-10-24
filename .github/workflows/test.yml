@@ -22,21 +22,54 @@ jobs:
       matrix:
         runner:
           - ubuntu-latest
-        deno_version:
-          # Minimum Denops support version
-          - "1.45.x"
-          # Latest version
-          - "2.x"
+        deno:
+          - version: ${{ vars.MIN_DENO_VERSION }}
+          - version: ${{ vars.MAX_DENO_VERSION }}
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v4
 
       - uses: denoland/setup-deno@v2
         with:
-          deno-version: "${{ matrix.deno_version }}"
+          deno-version: "${{ matrix.deno.version }}"
 
       - name: Pre-cache dependencies
         run: deno task cache
 
-      - name: Check
-        run: deno task check
+      - name: Check lint
+        if: ${{ !cancelled() }}
+        run: deno task check:lint
+
+      - name: Check format
+        if: ${{ !cancelled() }}
+        run: deno task check:fmt
+
+      - name: Check type
+        if: ${{ !cancelled() }}
+        run: deno task check:type
+
+      - name: Check doc
+        if: ${{ !cancelled() }}
+        run: deno task check:doc
+
+  check-publish:
+    needs: check
+    strategy:
+      matrix:
+        runner:
+          - ubuntu-latest
+        deno:
+          - version: ${{ vars.PUBLISH_DENO_VERSION }}
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: ${{ matrix.deno.version }}
+
+      - name: Pre-cache dependencies
+        run: deno task cache
+
+      - name: Check slow types
+        run: deno task check:publish
