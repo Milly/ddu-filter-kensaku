@@ -1,14 +1,17 @@
 {
   "lock": false,
-  "fmt": {
-    "exclude": [
-      "*.md"
-    ]
-  },
   "tasks": {
-    "cache": "deno cache **/*.ts",
-    "check": "deno lint && deno fmt --check && deno check --no-lock **/*.ts",
-    "test": "deno test -A --doc --parallel --shuffle",
-    "update": "deno run --unstable-kv --allow-env --allow-read --allow-write --allow-run=git,deno --allow-net=jsr.io,api.jsr.io jsr:@molt/cli@^0.19.1 **/*.ts"
-  }
+    "cache": "deno install",
+    "check": "deno task check:lint && deno task check:fmt && deno task check:type && deno task check:doc && deno task check:publish --allow-dirty",
+    "check:lint": "deno lint",
+    "check:fmt": "deno fmt --check",
+    "check:type": "deno check --no-lock",
+    "check:doc": "deno check --no-lock --doc-only **/*.ts **/*.md",
+    "check:publish": "deno publish --dry-run --set-version=0.0.0",
+    "fix": "deno lint --fix && deno fmt",
+    "test": "deno test -A --doc --parallel --shuffle"
+  },
+  "workspace": [
+    "./denops/@ddu-filters/matcher_kensaku"
+  ]
 }

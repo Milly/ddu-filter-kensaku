@@ -1,0 +1,35 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+  id-token: write # The OIDC ID token is used for authentication with JSR.
+
+jobs:
+  jsr:
+    strategy:
+      matrix:
+        runner:
+          - ubuntu-latest
+        deno:
+          - version: ${{ vars.PUBLISH_DENO_VERSION }}
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: ${{ matrix.deno.version }}
+
+      - name: Pre-cache dependencies
+        run: |
+          deno task cache
+
+      - name: Publish
+        run: deno run -A jsr:@david/publish-on-tag@0.2.0

@@ -1,0 +1,19 @@
+{
+  "name": "@milly/ddu-filter-matcher_kensaku",
+  "exports": {
+    ".": "./main.ts",
+    "./matcher": "./matcher.ts",
+    "./types": "./types.ts"
+  },
+  "publish": {
+    "include": [
+      "**/*.ts",
+      "README.md",
+      "LICENSE"
+    ]
+  },
+  "imports": {
+    "@denops/std": "jsr:@denops/std@^8.0.0",
+    "@shougo/ddu-vim": "jsr:@shougo/ddu-vim@^11.0.0"
+  }
+}
