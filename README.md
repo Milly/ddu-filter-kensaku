@@ -62,7 +62,7 @@ call ddu#custom#patch_global('filterParams', #{
 
 ```typescript:config.ts
 import { BaseConfig, type ConfigArguments } from "jsr:@shougo/ddu-vim/config";
-import type { MatcherKensakuParams } from "jsr:@milly/ddu-filter-matcher_kensaku/types";
+import type { MatcherKensakuParams } from "jsr:@milly/ddu-filter-matcher-kensaku/types";
 
 export class Config extends BaseConfig {
   override async config({ contextBuilder }: ConfigArguments) {
