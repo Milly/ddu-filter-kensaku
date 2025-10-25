@@ -31,8 +31,9 @@ Install all plugins below.
 
 ==============================================================================
 EXAMPLES					 *ddu-filter-kensaku-examples*
->
->
+
+Example configuration in Vim script:
+>vim
 	call ddu#custom#patch_global('sourceOptions', #{
 	      \  _: #{
 	      \    matchers: ['matcher_kensaku'],
@@ -45,6 +46,23 @@ EXAMPLES					 *ddu-filter-kensaku-examples*
 	    \    highlightMatched: 'Search',
 	    \  },
 	    \})
+<
+Example configuration in TypeScript (See |ddu#custom#load_config()|):
+>typescript
+	import { BaseConfig, type ConfigArguments } from "jsr:@shougo/ddu-vim/config";
+	import type { MatcherKensakuParams } from "jsr:@milly/ddu-filter-matcher-kensaku/types";
+
+	export class Config extends BaseConfig {
+	  override async config({ contextBuilder }: ConfigArguments) {
+	    contextBuilder.patchGlobal({
+	      filterParams: {
+	        matcher_kensaku: {
+	          highlightMatched: "Special",
+	        } satisfies MatcherKensakuParams,
+	      },
+	    });
+	  }
+	}
 <
 
 ==============================================================================
