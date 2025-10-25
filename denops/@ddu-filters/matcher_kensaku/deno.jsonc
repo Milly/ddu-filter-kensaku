@@ -1,5 +1,5 @@
 {
-  "name": "@milly/ddu-filter-matcher_kensaku",
+  "name": "@milly/ddu-filter-matcher-kensaku",
   "exports": {
     ".": "./main.ts",
     "./matcher": "./matcher.ts",
